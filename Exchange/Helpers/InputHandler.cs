@@ -1,4 +1,5 @@
-﻿using Exchange.Helpers.Interfaces;
+﻿using Exchange.Exceptions;
+using Exchange.Helpers.Interfaces;
 
 namespace Exchange.Helpers
 {

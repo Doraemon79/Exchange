@@ -1,9 +1,7 @@
-﻿using System.Collections.Frozen;
-
-namespace Exchange.Helpers.Interfaces
+﻿namespace Exchange.Helpers.Interfaces
 {
     public interface IApiGetter
     {
-        Task<FrozenDictionary<string, decimal>> GetRates();
+        Task<Dictionary<string, decimal>> GetRates();
     }
 }

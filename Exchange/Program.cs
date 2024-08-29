@@ -1,4 +1,5 @@
-﻿using Exchange.Helpers;
+﻿using Exchange.Exceptions;
+using Exchange.Helpers;
 using Exchange.Helpers.Interfaces;
 using Exchange.Logic;
 using Exchange.Logic.Interfaces;
@@ -9,7 +10,6 @@ using Serilog;
 
 internal class Program
 {
-
     static async Task Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
@@ -30,39 +30,47 @@ internal class Program
                         services.AddTransient<IExchangeCalculator, ExchangeCalculator>();
                     })
                        .Build();
-        // Resolve the App class and run it
-        try
+
+        var exit = false;
+
+
+        var RatesGetterService = host.Services.GetRequiredService<IApiGetter>();
+        var ActualRates = await RatesGetterService.GetRates();
+
+        var frozenRates = new Rates(ActualRates);
+        Console.WriteLine("Rates downloaded successfully");
+
+
+        while (!exit)
         {
-            var RatesGetterService = host.Services.GetRequiredService<IApiGetter>();
-            var ExchangeCalculatorService = host.Services.GetRequiredService<IExchangeCalculator>();
-            var ActualRates = (await RatesGetterService.GetRates());
-            Console.WriteLine("Rates downloaded successfully");
-            bool exit = false;
-            do
+            try
             {
+                var ExchangeCalculatorService = host.Services.GetRequiredService<IExchangeCalculator>();
                 Console.WriteLine("Usage: [amount] [input currency]/[output currency]. 'Exit' to Close");
                 var input = Console.ReadLine();
-                char[] delimiters = { '/', ' ' };
-                var sharedInput = host.Services.GetRequiredService<SharedInput>();
-                var InputHandlerService = host.Services.GetRequiredService<IInputHandler>();
-                sharedInput.InputItems = InputHandlerService.SplitInput(input);
-                if (sharedInput.InputItems[0].Equals("Exit"))
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    throw new CustomException("Input is meaningless please try again.");
+                }
+                if (input.Equals("Exit"))
                 {
                     exit = true;
                     Environment.Exit(0);
                 }
+                var sharedInput = host.Services.GetRequiredService<SharedInput>();
+                var InputHandlerService = host.Services.GetRequiredService<IInputHandler>();
+
+                sharedInput.InputItems = InputHandlerService.SplitInput(input);
                 var InputAmount = InputHandlerService.ConvertAmount(sharedInput.InputItems[0]);
-                var Result = ExchangeCalculatorService.RateCalculator(sharedInput.InputItems[1], sharedInput.InputItems[2], ActualRates);
 
+                var Result = ExchangeCalculatorService.RateCalculator(sharedInput.InputItems[1], sharedInput.InputItems[2], frozenRates.MyFrozenDictionary);
                 Console.WriteLine(ExchangeCalculatorService.AmountCalculator(InputAmount, Result));
-
-            } while (!exit);
+            }
+            catch (CustomException ex)
+            {
+                Console.WriteLine($"Custom Exception Caught: {ex.Message}");
+            }
 
         }
-
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Custom Exception Caught: {ex.Message}");
-        };
     }
 }

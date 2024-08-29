@@ -12,7 +12,6 @@ namespace Exchange.Logic
 
         public decimal RateCalculator(string InputCurrency, string OutputCurrency, FrozenDictionary<string, decimal> FrozenRates)
         {
-
             if (!FrozenRates.TryGetValue(OutputCurrency, out decimal outputRate))
             {
                 throw new KeyNotFoundException($"The currency '{OutputCurrency}' was not found in the dictionary.");

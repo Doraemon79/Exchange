@@ -1,6 +1,6 @@
 ﻿using Exchange.Helpers.Interfaces;
+using Exchange.Models;
 using Serilog;
-using System.Collections.Frozen;
 using System.Text.Json;
 
 namespace Exchange.Helpers
@@ -12,10 +12,12 @@ namespace Exchange.Helpers
 
         private static readonly string baseUrl = "https://api.freecurrencyapi.com/v1/latest";
 
+        private readonly Rates _rates;
+
         /// <summary>
         /// Fetches the latest currency exchange rates from FreecurrencyAPI.
         /// </summary>
-        public async Task<FrozenDictionary<string, decimal>> GetRates()
+        public async Task<Dictionary<string, decimal>> GetRates()
         {
             using HttpClient client = new HttpClient();
 
@@ -35,16 +37,15 @@ namespace Exchange.Helpers
                 string jsonResponse = await response.Content.ReadAsStringAsync();
 
                 // Step 1: Deserialize the JSON string into a Dictionary<string, decimal>
-                var currencyResponse = JsonSerializer.Deserialize<CurrencyResponse>(jsonResponse);
+                var currencyResponse = JsonSerializer.Deserialize<CurrencyResponse>(jsonResponse)?.data;
 
                 // Step 2: Convert the Dictionary to a FrozenDictionary
-                FrozenDictionary<string, decimal> frozenRates = currencyResponse?.data?.ToFrozenDictionary();
-
+                //FrozenDictionary<string, decimal> frozenRates = currencyResponse?.data?.ToFrozenDictionary();
 
                 // Check if the dictionary contains the currency data
-                if (frozenRates != null)
+                if (currencyResponse != null)
                 {
-                    return frozenRates;
+                    return currencyResponse;
                 }
                 else
                 {
@@ -55,7 +56,7 @@ namespace Exchange.Helpers
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
-                return FrozenDictionary<string, decimal>.Empty;
+                return new Dictionary<string, decimal>();
             }
         }
     }
