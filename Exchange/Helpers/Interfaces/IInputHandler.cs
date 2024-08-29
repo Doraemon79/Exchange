@@ -1,8 +1,11 @@
-﻿namespace Exchange.Helpers.Interfaces
+﻿using Exchange.Models;
+
+namespace Exchange.Helpers.Interfaces
 {
     public interface IInputHandler
     {
-        string[] SplitInput(string input);
+        List<ExchangeRequest> SplitInput(string input);
         decimal ConvertAmount(string amount);
+
     }
 }

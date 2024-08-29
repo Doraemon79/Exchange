@@ -39,9 +39,6 @@ namespace Exchange.Helpers
                 // Step 1: Deserialize the JSON string into a Dictionary<string, decimal>
                 var currencyResponse = JsonSerializer.Deserialize<CurrencyResponse>(jsonResponse)?.data;
 
-                // Step 2: Convert the Dictionary to a FrozenDictionary
-                //FrozenDictionary<string, decimal> frozenRates = currencyResponse?.data?.ToFrozenDictionary();
-
                 // Check if the dictionary contains the currency data
                 if (currencyResponse != null)
                 {

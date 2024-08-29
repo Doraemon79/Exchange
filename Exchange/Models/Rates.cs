@@ -6,10 +6,8 @@ namespace Exchange.Models
     {
         public FrozenDictionary<string, decimal> MyFrozenDictionary { get; }
 
-        public Rates(IDictionary<string, decimal> sourceDictionary)
-        {
-            // Creating the FrozenDictionary from a source dictionary
+        // Create the FrozenDictionary from a source dictionary
+        public Rates(IDictionary<string, decimal> sourceDictionary) =>
             MyFrozenDictionary = sourceDictionary.ToFrozenDictionary();
-        }
     }
 }

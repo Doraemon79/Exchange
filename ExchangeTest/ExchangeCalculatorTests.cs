@@ -75,5 +75,19 @@ namespace ExchangeTests
             Assert.Equal(expectedAmount, actualAmount);
         }
 
+        [Fact]
+        public void AmountCalculator_ZeroInput_ReturnsZero()
+        {
+            //Arrange     
+            var ExchangeCalculator = new ExchangeCalculator();
+
+            //Act
+            var actualAmount = ExchangeCalculator.AmountCalculator(0, 1.5m);
+            var expectedAmount = 0;
+
+            //Assert        
+            Assert.Equal(expectedAmount, actualAmount);
+        }
+
     }
 }

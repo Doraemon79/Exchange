@@ -45,8 +45,9 @@ internal class Program
         {
             try
             {
-                var ExchangeCalculatorService = host.Services.GetRequiredService<IExchangeCalculator>();
-                Console.WriteLine("Usage: [amount] [input currency]/[output currency]. 'Exit' to Close");
+                Console.WriteLine("Usage: [amount] [input currency]/[output currency]. 'Exit' to Close  ");
+                Console.WriteLine("Usage: use ',' to separate the decimal from the integer part ");
+
                 var input = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(input))
                 {
@@ -57,14 +58,22 @@ internal class Program
                     exit = true;
                     Environment.Exit(0);
                 }
+
+                //call th services
                 var sharedInput = host.Services.GetRequiredService<SharedInput>();
                 var InputHandlerService = host.Services.GetRequiredService<IInputHandler>();
+                var ExchangeCalculatorService = host.Services.GetRequiredService<IExchangeCalculator>();
 
-                sharedInput.InputItems = InputHandlerService.SplitInput(input);
-                var InputAmount = InputHandlerService.ConvertAmount(sharedInput.InputItems[0]);
 
-                var Result = ExchangeCalculatorService.RateCalculator(sharedInput.InputItems[1], sharedInput.InputItems[2], frozenRates.MyFrozenDictionary);
-                Console.WriteLine(ExchangeCalculatorService.AmountCalculator(InputAmount, Result));
+                //here it is all the logic
+                var requests = InputHandlerService.SplitInput(input);
+                foreach (var r in requests)
+                {
+                    var InputAmount = r.OriginalAmount;
+                    var Result = ExchangeCalculatorService.RateCalculator(r.InputCurrency, r.OutputCurrency, frozenRates.MyFrozenDictionary);
+                    Console.WriteLine(ExchangeCalculatorService.AmountCalculator(InputAmount, Result).ToString().Replace('.', ','));
+                }
+
             }
             catch (CustomException ex)
             {

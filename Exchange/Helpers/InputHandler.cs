@@ -1,13 +1,14 @@
 ﻿using Exchange.Exceptions;
 using Exchange.Helpers.Interfaces;
+using Exchange.Models;
 
 namespace Exchange.Helpers
 {
     public class InputHandler : IInputHandler
     {
-        public string[] SplitInput(string input)
+        public List<ExchangeRequest> SplitInput(string input)
         {
-
+            List<ExchangeRequest> exchangeRequests = new List<ExchangeRequest>();
             if (string.IsNullOrWhiteSpace(input))
             {
                 throw new CustomException("Input is empty");
@@ -16,8 +17,19 @@ namespace Exchange.Helpers
             {
                 throw new CustomException("Input is not written in a meaningful way.");
             }
-            char[] delimiters = { '/', ' ' };
-            return input.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+            var requests = input.Split(';').ToList();
+
+            foreach (var el in requests)
+            {
+                char[] delimiters = { '/', ' ' };
+                string[] singleRequest = el.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+                ExchangeRequest exchangeRequest = new ExchangeRequest();
+                exchangeRequest.OriginalAmount = ConvertAmount(singleRequest[0]);
+                exchangeRequest.InputCurrency = singleRequest[1];
+                exchangeRequest.OutputCurrency = singleRequest[2];
+                exchangeRequests.Add(exchangeRequest);
+            }
+            return exchangeRequests;
 
         }
 
@@ -26,7 +38,7 @@ namespace Exchange.Helpers
             decimal result = 0;
             try
             {
-                result = Decimal.Parse(amount);
+                result = Decimal.Parse(amount.Replace(',', '.'));
             }
             catch (FormatException)
             {
@@ -39,5 +51,7 @@ namespace Exchange.Helpers
 
             return result;
         }
+
+
     }
 }
