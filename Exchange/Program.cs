@@ -33,21 +33,18 @@ internal class Program
 
         var exit = false;
 
-
         var RatesGetterService = host.Services.GetRequiredService<IApiGetter>();
         var ActualRates = await RatesGetterService.GetRates();
-
         var frozenRates = new Rates(ActualRates);
         Console.WriteLine("Rates downloaded successfully");
 
-
+        Console.WriteLine("Usage: [amount] [input currency]/[output currency]. 'Exit' to Close  ");
+        Console.WriteLine("N.B. use ',' to separate the decimal from the integer part ");
+        Console.WriteLine("  use ';' to separate different requests E.g.: 100 USD/EUR;20,6 GBP/DKK; 33,45 EUR/USD ");
         while (!exit)
         {
             try
             {
-                Console.WriteLine("Usage: [amount] [input currency]/[output currency]. 'Exit' to Close  ");
-                Console.WriteLine("Usage: use ',' to separate the decimal from the integer part ");
-
                 var input = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(input))
                 {
@@ -64,22 +61,35 @@ internal class Program
                 var InputHandlerService = host.Services.GetRequiredService<IInputHandler>();
                 var ExchangeCalculatorService = host.Services.GetRequiredService<IExchangeCalculator>();
 
-
                 //here it is all the logic
-                var requests = InputHandlerService.SplitInput(input);
+                List<ExchangeRequest> requests = InputHandlerService.SplitInput(input);
                 foreach (var r in requests)
                 {
                     var InputAmount = r.OriginalAmount;
-                    var Result = ExchangeCalculatorService.RateCalculator(r.InputCurrency, r.OutputCurrency, frozenRates.MyFrozenDictionary);
-                    Console.WriteLine(ExchangeCalculatorService.AmountCalculator(InputAmount, Result).ToString().Replace('.', ','));
-                }
 
+                    //this clause is unencessary, in case of outputcurrency equals inputcurrency the
+                    //rate calculator would return 1 but it is here to avoid the (small) calculation
+                    if (r.InputCurrency.Equals(r.OutputCurrency))
+                    {
+                        Console.WriteLine(ExchangeCalculatorService.AmountCalculator(InputAmount, 1).ToString().Replace('.', ',') + "   " + r.OutputCurrency);
+                    }
+                    else
+                    {
+                        var Rate = ExchangeCalculatorService.RateCalculator(r.InputCurrency, r.OutputCurrency, frozenRates.MyFrozenDictionary);
+                        Console.WriteLine(ExchangeCalculatorService.AmountCalculator(InputAmount, Rate).ToString().Replace('.', ',') + "   " + r.OutputCurrency);
+                    }
+
+                }
             }
+
             catch (CustomException ex)
             {
                 Console.WriteLine($"Custom Exception Caught: {ex.Message}");
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Custom Exception Caught: {ex.Message}");
+            }
         }
     }
 }

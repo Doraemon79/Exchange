@@ -1,5 +1,4 @@
 ﻿using Exchange.Helpers.Interfaces;
-using Exchange.Models;
 using Serilog;
 using System.Text.Json;
 
@@ -11,8 +10,6 @@ namespace Exchange.Helpers
         private static readonly string apiKey = "fca_live_rwJH4eFRefty50fCgZGcRqSpm2vUHOkT2mkgDTxr";
 
         private static readonly string baseUrl = "https://api.freecurrencyapi.com/v1/latest";
-
-        private readonly Rates _rates;
 
         /// <summary>
         /// Fetches the latest currency exchange rates from FreecurrencyAPI.
@@ -36,7 +33,7 @@ namespace Exchange.Helpers
                 // Read the JSON response as a string
                 string jsonResponse = await response.Content.ReadAsStringAsync();
 
-                // Step 1: Deserialize the JSON string into a Dictionary<string, decimal>
+                // Deserialize the JSON string into a Dictionary<string, decimal>
                 var currencyResponse = JsonSerializer.Deserialize<CurrencyResponse>(jsonResponse)?.data;
 
                 // Check if the dictionary contains the currency data
@@ -62,5 +59,5 @@ namespace Exchange.Helpers
 // Define a class to hold the response data
 public class CurrencyResponse
 {
-    public Dictionary<string, decimal> data { get; set; }
+    public Dictionary<string, decimal>? data { get; set; }
 }

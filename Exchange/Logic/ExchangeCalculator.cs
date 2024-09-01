@@ -20,7 +20,8 @@ namespace Exchange.Logic
             {
                 throw new KeyNotFoundException($"The currency '{InputCurrency}' was not found in the dictionary.");
             }
-            if (InputCurrency == "DOL")
+            //Default reference currency in freecurrencyapi is USD
+            if (InputCurrency == "USD")
             {
                 return FrozenRates[OutputCurrency];
             }

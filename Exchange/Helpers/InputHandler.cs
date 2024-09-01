@@ -8,7 +8,7 @@ namespace Exchange.Helpers
     {
         public List<ExchangeRequest> SplitInput(string input)
         {
-            List<ExchangeRequest> exchangeRequests = new List<ExchangeRequest>();
+            List<ExchangeRequest> exchangeRequests = [];
             if (string.IsNullOrWhiteSpace(input))
             {
                 throw new CustomException("Input is empty");
@@ -23,14 +23,10 @@ namespace Exchange.Helpers
             {
                 char[] delimiters = { '/', ' ' };
                 string[] singleRequest = el.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                ExchangeRequest exchangeRequest = new ExchangeRequest();
-                exchangeRequest.OriginalAmount = ConvertAmount(singleRequest[0]);
-                exchangeRequest.InputCurrency = singleRequest[1];
-                exchangeRequest.OutputCurrency = singleRequest[2];
+                ExchangeRequest exchangeRequest = new ExchangeRequest(singleRequest[1], singleRequest[2], ConvertAmount(singleRequest[0]));
                 exchangeRequests.Add(exchangeRequest);
             }
             return exchangeRequests;
-
         }
 
         public decimal ConvertAmount(string amount)

@@ -14,12 +14,7 @@ namespace ExchangeTests
             var input = "100 USD/EUR";
             var expected = new List<ExchangeRequest>
             {
-                new ExchangeRequest
-                {
-                    InputCurrency = "USD",
-                    OriginalAmount = 100,
-                    OutputCurrency = "EUR"
-                }
+                new("USD","EUR",100)
             };
 
             // Act
@@ -75,7 +70,7 @@ namespace ExchangeTests
         {
             // Arrange
             var inputHandler = new InputHandler();
-            var amount = "100.5.5";
+            var amount = "100,5,5";
 
             // Act
             var result = inputHandler.ConvertAmount(amount);
@@ -83,6 +78,8 @@ namespace ExchangeTests
             // Assert
             Assert.Equal(0, result);
         }
+
+
         [Fact]
         public void ConvertAmountTest_EmptyInput_returnsZero()
         {

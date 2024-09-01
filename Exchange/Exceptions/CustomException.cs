@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Exchange.Exceptions
+﻿namespace Exchange.Exceptions
 {
     [Serializable]
     public class CustomException : Exception
@@ -17,11 +15,7 @@ namespace Exchange.Exceptions
         public CustomException(string message, Exception innerException)
             : base(message, innerException) { }
 
-        // Constructor for serialization
-        protected CustomException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         // Optional: Add any additional custom properties or methods
-        public string CustomProperty { get; set; }
+        public string CustomProperty { get; set; } = default!;
     }
 }
