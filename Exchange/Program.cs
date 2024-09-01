@@ -88,11 +88,13 @@ internal class Program
 
             catch (CustomException ex)
             {
+                Log.Information($"Custom Exception Caught: {ex.Message}");
                 Console.WriteLine($"Custom Exception Caught: {ex.Message}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Custom Exception Caught: {ex.Message}");
+                Log.Information($" Exception Caught: {ex.Message}");
+                Console.WriteLine($"Exception Caught: {ex.Message}");
             }
         }
     }
