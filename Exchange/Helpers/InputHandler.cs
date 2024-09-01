@@ -21,10 +21,13 @@ namespace Exchange.Helpers
 
             foreach (var el in requests)
             {
-                char[] delimiters = { '/', ' ' };
-                string[] singleRequest = el.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                ExchangeRequest exchangeRequest = new ExchangeRequest(singleRequest[1], singleRequest[2], ConvertAmount(singleRequest[0]));
-                exchangeRequests.Add(exchangeRequest);
+                if (!string.IsNullOrWhiteSpace(el))
+                {
+                    char[] delimiters = { '/', ' ' };
+                    string[] singleRequest = el.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+                    ExchangeRequest exchangeRequest = new ExchangeRequest(singleRequest[1], singleRequest[2], ConvertAmount(singleRequest[0]));
+                    exchangeRequests.Add(exchangeRequest);
+                }
             }
             return exchangeRequests;
         }
