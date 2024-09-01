@@ -5,6 +5,5 @@ Values are in decimal, it is more precise and it is the way I did while working 
 Reference currency is $.
 Rates are fetched from https://freecurrencyapi.com/ the Get request is done everytime the app starts. I opened an account and used my personal key, I did not make a config.yams file I just hardcoded.
 
-example of wrong input:
 
 
