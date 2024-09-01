@@ -1,3 +1,4 @@
+using Exchange.Exceptions;
 using Exchange.Logic;
 using System.Collections.Frozen;
 
@@ -12,7 +13,8 @@ namespace ExchangeTests
         { "EUR", 0.8945801398m },
         { "DKK", 6.6737710158m },
         { "Tst", 2m },
-        { "Tst1", 7m }
+        { "Tst1", 7m },
+         { "Tst2", 0m }
     };
 
 
@@ -89,5 +91,57 @@ namespace ExchangeTests
             Assert.Equal(expectedAmount, actualAmount);
         }
 
+        [Fact]
+        private void AmountCalculator_NegativeInput_ThrowsCustomException()
+        {
+            //Arrange     
+            var ExchangeCalculator = new ExchangeCalculator();
+
+            //Act
+            CustomException exception = Assert.Throws<CustomException>(() => ExchangeCalculator.AmountCalculator(-100, 1.5m));
+
+            //Assert
+            Assert.Equal("The amount must be a positive number.", exception.Message);
+        }
+
+        [Fact]
+        private void AmountCalculator_NegativeRate_ThrowsCustomException()
+        {
+            //Arrange     
+            var ExchangeCalculator = new ExchangeCalculator();
+
+            //Act
+            CustomException exception = Assert.Throws<CustomException>(() => ExchangeCalculator.AmountCalculator(100, -1.5m));
+
+            //Assert
+            Assert.Equal("The rate must be a positive number.", exception.Message);
+        }
+
+        [Fact]
+        private void AmountCalculator_ZeroRate_ThrowsCustomException()
+        {
+            //Arrange     
+            var ExchangeCalculator = new ExchangeCalculator();
+
+            //Act
+            CustomException exception = Assert.Throws<CustomException>(() => ExchangeCalculator.AmountCalculator(100, 0));
+
+            //Assert
+            Assert.Equal("The rate must be a positive number.", exception.Message);
+        }
+
+        [Fact]
+        private void RateCalculator_ZeroRate_ThrowsCustomException()
+        {
+            //Arrange
+            FrozenDictionary<string, decimal> FrozenRates = dictionary.ToFrozenDictionary();
+            var ExchangeCalculator = new ExchangeCalculator();
+
+            //Act
+            CustomException exception = Assert.Throws<CustomException>(() => ExchangeCalculator.RateCalculator("Tst", "Tst2", FrozenRates));
+
+            //Assert
+            Assert.Equal("The rates must be   positive numbers.", exception.Message);
+        }
     }
 }

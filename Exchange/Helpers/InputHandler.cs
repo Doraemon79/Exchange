@@ -35,6 +35,10 @@ namespace Exchange.Helpers
             try
             {
                 result = Decimal.Parse(amount.Replace(',', '.'));
+                if (result < 0)
+                {
+                    throw new CustomException("Amount cannot be negative");
+                }
             }
             catch (FormatException)
             {

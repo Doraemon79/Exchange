@@ -67,11 +67,15 @@ internal class Program
                 {
                     var InputAmount = r.OriginalAmount;
 
-                    //this clause is unencessary, in case of outputcurrency equals inputcurrency the
+                    //these 2 clauses are unencessary, in case of outputcurrency equals inputcurrency the
                     //rate calculator would return 1 but it is here to avoid the (small) calculation
                     if (r.InputCurrency.Equals(r.OutputCurrency))
                     {
                         Console.WriteLine(ExchangeCalculatorService.AmountCalculator(InputAmount, 1).ToString().Replace('.', ',') + "   " + r.OutputCurrency);
+                    }
+                    if (InputAmount == 0)
+                    {
+                        Console.WriteLine("Amount is 0, no conversion needed");
                     }
                     else
                     {

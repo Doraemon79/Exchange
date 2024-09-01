@@ -93,5 +93,19 @@ namespace ExchangeTests
             // Assert
             Assert.Equal(0, result);
         }
+
+        [Fact]
+        private void ConvertAmountTest_NegativeInput_ThrowsCustomException()
+        {
+            // Arrange
+            var inputHandler = new InputHandler();
+            var amount = "-100";
+
+            // Act
+            CustomException exception = Assert.Throws<CustomException>(() => inputHandler.ConvertAmount(amount));
+
+            // Assert
+            Assert.Equal("Amount cannot be negative", exception.Message);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Exchange.Logic.Interfaces;
+﻿using Exchange.Exceptions;
+using Exchange.Logic.Interfaces;
 using System.Collections.Frozen;
 
 namespace Exchange.Logic
@@ -7,6 +8,15 @@ namespace Exchange.Logic
     {
         public decimal AmountCalculator(decimal originalAmount, decimal rate)
         {
+            //this 2 clauses should never be needed but it is good practice to check for invalid inputs
+            if (!(originalAmount >= 0))
+            {
+                throw new CustomException("The amount must be a positive number.");
+            }
+            if (!(rate > 0))
+            {
+                throw new CustomException("The rate must be a positive number.");
+            }
             return originalAmount * rate;
         }
 
@@ -19,6 +29,13 @@ namespace Exchange.Logic
             if (!FrozenRates.TryGetValue(InputCurrency, out decimal inputRate))
             {
                 throw new KeyNotFoundException($"The currency '{InputCurrency}' was not found in the dictionary.");
+            }
+
+            //Check if the rates are valid this clause is not really needed but it is
+            //a good practice to check for invalid rates 
+            if (!(inputRate > 0) || !(outputRate > 0))
+            {
+                throw new CustomException("The rates must be   positive numbers.");
             }
             //Default reference currency in freecurrencyapi is USD
             if (InputCurrency == "USD")
